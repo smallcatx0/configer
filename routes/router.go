@@ -18,6 +18,6 @@ func Register(r *gin.Engine) {
 	r.GET("/ready", health.Ready)
 	r.GET("/reload", health.ReloadConf)
 	r.GET("/test", health.Test)
-	registeAPI(r)
-	registeAdmin(r)
+	registeAPI(r.Group("/api"))
+	registeAdmin(r.Group("/admin"))
 }
