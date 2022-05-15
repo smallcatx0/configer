@@ -16,3 +16,19 @@ type EnvEditParam struct {
 	OwnerName  string `json:"owner"`
 	OwnerPhone string `json:"owner_phone"`
 }
+
+type AppAddParam struct {
+	Name       string `json:"name" binding:"required"`
+	Sign       string `json:"sign" binding:"required"`
+	Desc       string `json:"desc"`
+	OwnerName  string `json:"owner"`
+	OwnerPhone string `json:"owner_phone"`
+}
+
+type AppEditParam struct {
+	Sign       string `json:"sign" binding:"required"`
+	Name       string `json:"name"`
+	Desc       string `json:"desc"`
+	OwnerName  string `json:"owner"`
+	OwnerPhone string `json:"owner_phone"`
+}

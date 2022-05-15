@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"gtank/models/dao"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -32,13 +33,13 @@ func (AppEnv) Col() *mongo.Collection {
 	return dao.MongoDb.Collection("env")
 }
 
-func (e *AppEnv) Save() (id string, err error) {
+func (e *AppEnv) NewOne() (id string, err error) {
 	// 先检查是否存在
 	err = e.Col().FindOne(ctx, bson.D{
 		{"sign", e.Sign},
 	}).Err()
 	if err == nil {
-		return "", fmt.Errorf("环境已存在")
+		return "", fmt.Errorf("资源已存在")
 	}
 	e.ID = primitive.NewObjectID()
 	res, err := e.Col().InsertOne(ctx, e)
@@ -97,12 +98,80 @@ func (e *AppEnv) Del() (count int64, err error) {
 	return
 }
 
-type AppConf struct {
-	AppName   string
-	AppSign   string
-	Env       string
-	FileName  string
-	Content   string
-	CreateAt  string
+type App struct {
+	ID        primitive.ObjectID `bson:"_id"`
+	Name      string
+	Sign      string
+	Desc      string
+	CreateAt  time.Time
 	Principal Contact
+}
+
+func (App) Col() *mongo.Collection {
+	return dao.MongoDb.Collection("app")
+}
+
+func (a *App) NewOne() (id string, err error) {
+	q := bson.D{
+		{"sign", a.Sign},
+	}
+	err = a.Col().FindOne(ctx, q).Err()
+	if err == nil {
+		return "", fmt.Errorf("资源已存在")
+	}
+	a.ID = primitive.NewObjectID()
+	a.CreateAt = time.Now()
+	res, err := a.Col().InsertOne(ctx, a)
+	if err != nil {
+		return "", err
+	}
+	id = res.InsertedID.(primitive.ObjectID).Hex()
+	return
+}
+
+func (a *App) Edit() (count int64, err error) {
+	up := bson.D{}
+	if a.Name != "" {
+		up = append(up, bson.E{"name", a.Name})
+	}
+	if a.Desc != "" {
+		up = append(up, bson.E{"desc", a.Desc})
+	}
+	if a.Principal.Name != "" {
+		up = append(up, bson.E{"principal", a.Principal})
+	}
+	res, err := a.Col().UpdateOne(ctx, bson.D{
+		{"sign", a.Sign},
+	}, bson.D{
+		{"$set", up},
+	})
+	if err != nil {
+		return
+	}
+	count = res.ModifiedCount
+	return
+}
+func (a *App) List() (list []App, err error) {
+	q := bson.D{}
+	res, err := a.Col().Find(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	err = res.All(ctx, &list)
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (a *App) Del() (count int64, err error) {
+	q := bson.M{
+		"sign": a.Sign,
+	}
+	res, err := a.Col().DeleteOne(ctx, q)
+	if err != nil {
+		return
+	}
+	count = res.DeletedCount
+	return
 }
