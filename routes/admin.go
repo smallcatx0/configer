@@ -12,6 +12,7 @@ func registeAdmin(router *gin.RouterGroup) {
 	appConf := &v1.AppConf{}
 	{
 		routV1.POST("/conf/env-add", appConf.EnvAdd)
+		routV1.POST("/conf/env-edit", appConf.EnvEdit)
 		routV1.POST("/conf/env-del", appConf.EnvDel)
 		routV1.GET("/conf/envs", appConf.EnvList)
 	}

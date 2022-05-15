@@ -14,7 +14,9 @@ var (
 	Code_NoLogin      = 10004
 	Code_LoginTimeout = 10005
 	Code_IllegalToken = 10006
-	Code_Illegal      = 40003
+	Code_Illegal      = 20003
+
+	Code_NotFund = 40001
 )
 
 var ErrNos = map[int]string{
@@ -33,4 +35,6 @@ var (
 	LoginTimeOut = NewException(http.StatusUnauthorized, Code_LoginTimeout, "登录超时")
 	IllegalToken = NewException(http.StatusUnauthorized, Code_IllegalToken, "token非法")
 	Illegal      = NewException(http.StatusForbidden, Code_Illegal, "非法操作")
+
+	NotFund = NewException(http.StatusNotFound, Code_NotFund, "资源未找到")
 )

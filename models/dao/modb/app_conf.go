@@ -10,6 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+var (
+	ctx = context.TODO()
+)
+
 type Contact struct {
 	Name  string
 	Phone string
@@ -28,21 +32,68 @@ func (AppEnv) Col() *mongo.Collection {
 	return dao.MongoDb.Collection("env")
 }
 
-func (d *AppEnv) Save() (id interface{}, err error) {
+func (e *AppEnv) Save() (id string, err error) {
 	// 先检查是否存在
-	ctx := context.TODO()
-	err = d.Col().FindOne(ctx, bson.D{
-		{"sign", d.Sign},
+	err = e.Col().FindOne(ctx, bson.D{
+		{"sign", e.Sign},
 	}).Err()
 	if err == nil {
 		return "", fmt.Errorf("环境已存在")
 	}
-	d.ID = primitive.NewObjectID()
-	res, err := d.Col().InsertOne(ctx, d)
+	e.ID = primitive.NewObjectID()
+	res, err := e.Col().InsertOne(ctx, e)
 	if err != nil {
 		return "", err
 	}
 	id = res.InsertedID.(primitive.ObjectID).Hex()
+	return
+}
+
+func (e *AppEnv) Edit() (count int64, err error) {
+	up := bson.D{}
+	if e.Name != "" {
+		up = append(up, bson.E{"name", e.Name})
+	}
+	if e.Desc != "" {
+		up = append(up, bson.E{"desc", e.Desc})
+	}
+	if e.Principal.Name != "" {
+		up = append(up, bson.E{"principal", e.Principal})
+	}
+	res, err := e.Col().UpdateOne(ctx, bson.D{
+		{"sign", e.Sign},
+	}, bson.D{
+		{"$set", up},
+	})
+	if err != nil {
+		return
+	}
+	count = res.ModifiedCount
+	return
+}
+
+func (e *AppEnv) List() (list []AppEnv, err error) {
+	q := bson.D{}
+	res, err := e.Col().Find(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	err = res.All(ctx, &list)
+	if err != nil {
+		return nil, err
+	}
+	return
+}
+
+func (e *AppEnv) Del() (count int64, err error) {
+	q := bson.M{
+		"sign": e.Sign,
+	}
+	res, err := e.Col().DeleteOne(ctx, q)
+	if err != nil {
+		return
+	}
+	count = res.DeletedCount
 	return
 }
 
