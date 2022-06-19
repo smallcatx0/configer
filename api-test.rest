@@ -1,0 +1,130 @@
+@baseurl=http://127.0.0.1:8081
+
+###
+GET {{baseurl}}/healthz
+
+###
+GET {{baseurl}}/ready
+
+###
+// 添加环境
+POST {{baseurl}}/admin/v1/conf/env-add
+
+{
+    "name": "狂炫",
+    "type": "dev",
+    "sign": "dev-3",
+    "desc": "狂吊炸天",
+    "owner": "急先aa锋",
+    "owner_phone": "11990033921"
+}
+
+###
+// 环境列表
+GET {{baseurl}}/admin/v1/conf/envs
+
+###
+// 环境编辑
+POST {{baseurl}}/admin/v1/conf/env-edit
+
+{
+    "sign": "dev-2",
+    "name": "酷炫",
+    "desc": "狂拽酷炫吊炸天-划掉",
+    "owner": "急1先2锋",
+    "owner_phone": "1990033921"
+}
+
+###
+// 环境删除
+POST {{baseurl}}/admin/v1/conf/env-del
+
+{
+    "sign": "dev-3"
+}
+
+###
+// app创建
+POST {{baseurl}}/admin/v1/conf/app-add
+
+{
+    "name": "用户中心",
+    "sign": "b-user",
+    "desc": "这是用户中心~",
+    "owner": "用户管理员",
+    "owner_phone": "11987033921"
+}
+
+###
+// app列表
+GET {{baseurl}}/admin/v1/conf/apps
+
+###
+// app编辑
+POST {{baseurl}}/admin/v1/conf/app-edit
+
+{
+    "sign": "b-user",
+    "name": "用户改名中心",
+    "desc": "用户改名中心0012",
+    "owner": "用户员",
+    "owner_phone": "11987087812"
+}
+
+###
+// app删除
+POST {{baseurl}}/admin/v1/conf/app-del
+
+{
+    "sign":"b-user-a"
+}
+
+###
+// 配置文件-添加
+POST {{baseurl}}/admin/v1/conf/file-add
+
+{
+    "app_sign": "b-user",
+    "env_sign": "dev-1",
+    "header": "张三",
+    "header_phone": "1838239018",
+    "file_name": "conf/app.ini",
+    "content": "v:1.2\nname:descss\n",
+    "type": "ini"
+}
+
+###
+// 应用配置历史记录
+GET {{baseurl}}/admin/v1/conf/file-history
+    ?app=b-user
+    &env=dev-1
+    &file=conf/app.ini
+###
+// 应用配置查询(最新配置)
+GET {{baseurl}}/admin/v1/conf/appconf
+    ?app=b-user
+    &env=dev-1
+
+###
+// 删除配置文件
+POST {{baseurl}}/admin/v1/conf/file-del
+
+{
+    "app": "b-user",
+    "env": "dev-1",
+    "file": "conf/app.ini"
+}
+###
+// 添加数据库策略
+POST {{baseurl}}/admin/v1/dbcron/ttl-add
+
+{
+    "dsn": "root:123123@tcp(mysql.serv:3306)/logcenter?charset=utf8mb4&parseTime=True&loc=Local",
+    "db": "test",
+    "table": "adm",
+    "field": "updated_at",
+    "cron": "*/5 * * * * ?",
+    "ttl": 3600,
+    "limit": 5000,
+    "desc": "数据库定时删除"
+}

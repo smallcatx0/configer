@@ -14,7 +14,7 @@ func (Health) Healthz(c *gin.Context) {
 }
 
 func (Health) Ready(c *gin.Context) {
-	resp.Succ(c, resp.ErrNos[resp.Code_Succ])
+	resp.Succ(c, "ooooook")
 }
 
 // 重新加载配置文件
@@ -22,7 +22,7 @@ func (Health) ReloadConf(c *gin.Context) {
 	bootstrap.InitConf(&bootstrap.Param.C)
 	bootstrap.InitLog()
 	bootstrap.InitDB()
-	resp.Succ(c, "")
+	resp.Succ(c, "yeeeeee")
 }
 
 func (Health) Test(c *gin.Context) {

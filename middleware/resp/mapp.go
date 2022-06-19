@@ -14,22 +14,18 @@ var (
 	Code_NoLogin      = 10004
 	Code_LoginTimeout = 10005
 	Code_IllegalToken = 10006
+	Code_Repeat       = 10010
 	Code_Illegal      = 20003
 
 	Code_NotFund = 40001
 )
-
-var ErrNos = map[int]string{
-	Code_Succ: "操作成功",
-	Code_Fail: "参数错误",
-	Code_Err:  "系统错误,请稍后再试",
-}
 
 var (
 	// 参数错误
 	ParamInValid = func(msg ...string) *Exception {
 		return NewException(http.StatusBadRequest, Code_ParamInValid, msg...)
 	}
+	Repeat = NewException(http.StatusBadRequest, Code_Repeat, "资源重复")
 
 	NoLogin      = NewException(http.StatusUnauthorized, Code_NoLogin, "未登录")
 	LoginTimeOut = NewException(http.StatusUnauthorized, Code_LoginTimeout, "登录超时")

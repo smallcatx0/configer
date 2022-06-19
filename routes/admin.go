@@ -8,18 +8,26 @@ import (
 
 // 内部管理系统接口
 func registeAdmin(router *gin.RouterGroup) {
-	routV1 := router.Group("/v1")
-	appConf := &v1.AppConf{}
+	confR := router.Group("/v1/conf")
 	{
-		routV1.GET("/conf/envs", appConf.EnvList)
-		routV1.POST("/conf/env-add", appConf.EnvAdd)
-		routV1.POST("/conf/env-edit", appConf.EnvEdit)
-		routV1.POST("/conf/env-del", appConf.EnvDel)
-
-		routV1.GET("/conf/apps", appConf.AppList)
-		routV1.POST("/conf/app-add", appConf.AppAdd)
-		routV1.POST("/conf/app-edit", appConf.AppEdit)
-		routV1.POST("/conf/app-del", appConf.AppDel)
+		confCtl := v1.AppConf{}
+		confR.GET("/envs", confCtl.EnvList)
+		confR.POST("/env-add", confCtl.EnvAdd)
+		confR.POST("/env-edit", confCtl.EnvEdit)
+		confR.POST("/env-del", confCtl.EnvDel)
+		confR.GET("/apps", confCtl.AppList)
+		confR.POST("/app-add", confCtl.AppAdd)
+		confR.POST("/app-edit", confCtl.AppEdit)
+		confR.POST("/app-del", confCtl.AppDel)
+		confR.POST("/file-add", confCtl.FileAdd)
+		confR.POST("/file-del", confCtl.FileDel)
+		confR.GET("/file-history", confCtl.History)
+		confR.GET("/appconf", confCtl.Top)
 	}
 
+	cronR := router.Group("/v1/dbcron")
+	{
+		dbcronCtl := v1.DbCron{}
+		cronR.POST("/ttl-add", dbcronCtl.TTLAdd)
+	}
 }
