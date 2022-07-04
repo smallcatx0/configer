@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -39,10 +40,10 @@ func (d *DbTTL) IsExist() (ok bool, err error) {
 	}
 	err = d.Col().FindOne(ctx, q).Err()
 	if err == nil {
-		return false, nil
+		return true, nil
 	}
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		return true, nil
+		return false, nil
 	} else {
 		return false, err
 	}
@@ -57,5 +58,38 @@ func (d *DbTTL) NewOne() (id string, err error) {
 		return "", err
 	}
 	id = res.InsertedID.(primitive.ObjectID).Hex()
+	return
+}
+
+func (d *DbTTL) Edit(up bson.D) (cont int64, err error) {
+	res, err := d.Col().UpdateByID(ctx, d.ID, bson.D{{
+		Key: "$set", Value: up,
+	}})
+	if err != nil {
+		return
+	}
+	cont = res.ModifiedCount
+	return
+}
+
+func (d *DbTTL) Del() error {
+	_, err := d.Col().DeleteOne(ctx, bson.D{
+		{Key: "_id", Value: d.ID},
+	})
+	return err
+}
+
+func (d *DbTTL) List(q bson.D, skip, limit int) (list []DbTTL, err error) {
+	opt := options.Find()
+	opt.SetSkip(int64(skip))
+	opt.SetLimit(int64(limit))
+	cur, err := d.Col().Find(ctx, q, opt)
+	if err != nil {
+		return nil, err
+	}
+	err = cur.All(ctx, &list)
+	if err != nil {
+		return nil, err
+	}
 	return
 }

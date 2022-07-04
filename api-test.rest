@@ -128,3 +128,28 @@ POST {{baseurl}}/admin/v1/dbcron/ttl-add
     "limit": 5000,
     "desc": "数据库定时删除"
 }
+
+###
+// 编辑策略数据
+POST {{baseurl}}/admin/v1/dbcron/ttl-edit
+
+{
+    "id": "62c254a6723df51a9fe94806",
+    "field": "created_ated",
+    "cron": "*/5 * * * 3 ?",
+    "limit": 725800,
+    "ttl": 300,
+    "desc": "删删删"
+}
+
+###
+// 删除数据库策略
+POST {{baseurl}}/admin/v1/dbcron/ttl-del
+
+{
+    "id": "62c254d4723df51a9fe94807"
+}
+
+###
+// 
+GET {{baseurl}}/admin/v1/dbcron/ttls

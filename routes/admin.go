@@ -29,5 +29,8 @@ func registeAdmin(router *gin.RouterGroup) {
 	{
 		dbcronCtl := v1.DbCron{}
 		cronR.POST("/ttl-add", dbcronCtl.TTLAdd)
+		cronR.POST("/ttl-edit", dbcronCtl.TTLEdit)
+		cronR.POST("/ttl-del", dbcronCtl.TTLDel)
+		cronR.GET("/ttls", dbcronCtl.TTLList)
 	}
 }
