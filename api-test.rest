@@ -151,5 +151,5 @@ POST {{baseurl}}/admin/v1/dbcron/ttl-del
 }
 
 ###
-// 
+// 数据库TTL策略列表
 GET {{baseurl}}/admin/v1/dbcron/ttls
